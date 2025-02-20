@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class ControlerService {
     private static final Logger log = LoggerFactory.getLogger(ControlerService.class);
     public RestTemplate rest;
-    private static final String m_Url = "https://newsapi.org/v2/everything?q=%s&from=%d-%d-%d&sortBy=popularity&apiKey=652f7a9cea6e4975baadd200bf9799ee";
+    private static final String m_Url = "https://newsapi.org/v2/everything?q=%s&from=%s&sortBy=popularity&apiKey=652f7a9cea6e4975baadd200bf9799ee";
 
     // https://newsapi.org/v2/everything?q=iran&from=2024-11-19&sortBy=popularity&apiKey=652f7a9cea6e4975baadd200bf9799ee
     public ControlerService(RestTemplate rest) {
@@ -25,14 +25,10 @@ public class ControlerService {
 
         try {
             var now = LocalDate.now();
-            var year = now.getYear();
-            var month = now.getMonthValue();
-            var day = now.getDayOfMonth() - 2;
-
-            var urls = m_Url.formatted("türkiye", year, month, day);
+            var urls = m_Url.formatted("türkiye", now.minusDays(1).toString());
 
             log.info("Url ---------------------- {}", urls);
-            return rest.getForObject(urls, ArticleSearch.class);
+            return this.newsCityh("türkiye");
         } catch (Throwable ex) {
             log.error("Throwable Exception newsSearch {} ", ex.getMessage());
         }
@@ -42,10 +38,7 @@ public class ControlerService {
     public ArticleSearch newsCityh(String city) {
         try {
             var now = LocalDate.now();
-            var year = now.getYear();
-            var month = now.getMonthValue();
-            var day = now.getDayOfMonth() - 2;
-            var urls = m_Url.formatted(city, year, month, day);
+            var urls = m_Url.formatted(city,now.minusDays(1).toString());
             log.info("url {}", urls);
             return rest.getForObject(urls, ArticleSearch.class);
         } catch (Throwable ex) {
@@ -57,13 +50,10 @@ public class ControlerService {
     public ArticleSearch currentNews() {
         try {
             var now = LocalDate.now();
-            var month = now.getMonthValue();
-            var day = now.getDayOfMonth() - 2;
-            var year = now.getYear();
 
-            var url = m_Url.formatted("Güncel", year, month, day);
+            var url = m_Url.formatted("Güncel", now.minusDays(1).toString());
             log.info("current {}", url);
-            return rest.getForObject(url, ArticleSearch.class);
+            return this.newsCityh("Güncel");
 
         } catch (Throwable ex) {
             log.error("Current Throwable exception {}",
@@ -74,15 +64,10 @@ public class ControlerService {
 
     public ArticleSearch Siyaset() {
         try {
-            var now = LocalDate.now();
-            var month = now.getMonthValue();
-            var day = now.getDayOfMonth() - 2;
-            var year = now.getYear();
-
-            var url = m_Url.formatted("Siyaset", year, month, day);
+            var url = m_Url.formatted("Siyaset",LocalDate.now().minusDays(1).toString());
             log.info("Siyaset {}",url);
 
-            return rest.getForObject(url, ArticleSearch.class);
+            return this.newsCityh("Siyaset");
         } catch (Throwable ex) {
             log.error("Spor Throwable Exception {}", ex.getMessage());
         }
